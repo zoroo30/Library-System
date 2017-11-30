@@ -38,7 +38,7 @@ void search_title(char search[])
     else show(book_array[j]);
 
 }
-\\function to search by ISBN
+\\function(1) searches by ISBN only
 void search_ISBN(char search[])
 {
     int j=0;
@@ -74,4 +74,27 @@ void search_publisher(char search[])
     else show(book_array[j]);
 
 }
+\\function(2) searches by ISBN only returns flag
+bool search_ISBN2(char search[])
+{
+    int j=0;
+    while(strstr(book_array[j].ISBN,search)== NULL && j<i)
+    {
+        j++;
+    }
+    if(strstr(book_array[j].ISBN,search)== NULL) return false;
+    else return true;
+
+}
+
+
+void add_copy(char ISBN[],int* num_copies)
+{
+    if(search_ISBN2(ISBN))
+    {
+        *num_copies+=1;
+    }
+    else printf("\nThis book doesn't exist");
+}
+
 
