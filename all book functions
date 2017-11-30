@@ -1,0 +1,41 @@
+\\global variables
+book book_array[50];
+int i=5;
+\\insert a new book to global ARRAY (not file)
+void insert_book(void)
+{
+   book inserted;
+   gets(inserted.title);
+   gets(inserted.author);
+   gets(inserted.publisher);
+   gets(inserted.ISBN);
+   scanf("%d%d",&(inserted.copies),&(inserted.current));
+   scanf("%d%d%d",&(inserted.date.day),&(inserted.date.month),&(inserted.date.year));
+   book_array[i]=inserted;
+   i++;
+    return ;
+}
+
+\\display function
+void show(book toShow)
+{
+    printf("Title:\t%s",toShow.title);
+    printf("Author:\t%s",toShow.author);
+    printf("Publisher:\t%s",toShow.publisher);
+    printf("ISBN:\t%s",toShow.ISBN);
+    printf("Date:%d\%d\%d",toShow.date.day,toShow.date.month,toShow.date.year);
+    printf("available Copies:\t%d\nCurrent Copies:\t%d",toShow.copies,toShow.current);
+    return ;
+}
+\\function to search by title >>>> not sure if it works well
+void search_title(char search[])
+{
+    int j=0;
+    while(strstr(book_array[j].title,search)== NULL && j<i)
+    {
+        j++;
+    }
+    if(strstr(book_array[j].title,search)== NULL) printf("\nOur library doesn't have this book\n");
+    else show(book_array[j]);
+
+}
