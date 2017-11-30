@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
+#include "navigation.h"
 
 int main()
 {
-    printf("Hello world!\n");
+    load_menu(-1,"");
     return 0;
 }
+
