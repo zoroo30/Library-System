@@ -23,7 +23,7 @@ void show(book toShow)
     printf("Author: %s\n",toShow.author);
     printf("Publisher: %s\n",toShow.publisher);
     printf("ISBN: %s\n",toShow.ISBN);
-    printf("Date: %d\\ %d\\ %d\\n",toShow.date.day,toShow.date.month,toShow.date.year);
+    printf("Date: %d\\%d\\%d\n",toShow.date.day,toShow.date.month,toShow.date.year);
     printf("available Copies: %d\nCurrent Copies: %d\n",toShow.copies,toShow.current);
 }
 \\function to search by title 
