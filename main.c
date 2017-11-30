@@ -1,6 +1,5 @@
-#include <stdio.h>
+##include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
 #include "navigation.h"
 
 int main()
@@ -8,4 +7,3 @@ int main()
     load_menu(-1,"");
     return 0;
 }
-
