@@ -16,8 +16,8 @@ typedef struct
 {
     char name[10];
     int ID;
-    addressStruct* address;
+    addressStruct address;
     long int mobile;
     int age;
-    emailStruct* email;
+    emailStruct email;
 } member;
