@@ -1,6 +1,6 @@
 \\global variables
 book book_array[50];
-int i=5;
+int i=5;\\assume library has 6 books saved already
 \\insert a new book to global ARRAY (not file)
 void insert_book(void)
 {
