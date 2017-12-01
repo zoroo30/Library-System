@@ -1,0 +1,17 @@
+//registeration
+//na2es validation of all inputs
+void registeration(void)
+{
+   member inserted;
+   gets(inserted.name);
+   scanf("%d",&(member_array[i].ID));
+   scanf("%d",&(member_array[i].address.buildNum));
+   gets(member_array[i].address.city);
+   gets(member_array[i].address.street);
+   scanf("%d%d",&(member_array[i].mobile),&(member_array[i].age));
+   gets(member_array[i].email.name);
+   gets(member_array[i].email.domain);
+   member_array[i]=inserted;
+   i++;
+    return ;
+}
