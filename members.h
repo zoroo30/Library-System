@@ -1,23 +1,18 @@
-typedef struct
-{
-    int buildNum;
-    char street[10];
-    char city[10];
-} addressStruct;
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <string.h>
+#include <stdbool.h>
+#include "members.h"
 
-typedef struct
+int search_ID(int ID)
 {
-    char name[10];
-    char domain[10];
+    int j=0;
+    while(member_array[j].ID!=ID && j<i)
+    {
+        j++;
+    }
+    if(member_array[j].ID!=ID) return -1;
+    else return j;
 
-} emailStruct;
-
-typedef struct
-{
-    char name[10];
-    int ID;
-    addressStruct address;
-    long int mobile;
-    int age;
-    emailStruct email;
-} member;
+}
