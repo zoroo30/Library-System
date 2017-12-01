@@ -46,7 +46,7 @@ int search_ISBN(char search[])
     {
         j++;
     }
-    if(strstr(book_array[j].ISBN,search)== NULL) return 0;
+    if(strstr(book_array[j].ISBN,search)== NULL) return -1;
     else return j;
 
 }
@@ -78,7 +78,7 @@ void search_publisher(char search[])
 
 void add_copy(char ISBN[],int* num_copies)
 {
-    if(search_ISBN2(ISBN))
+    if(search_ISBN(ISBN)!=-1)
     {
         *num_copies+=1;
     }
