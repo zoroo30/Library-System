@@ -84,5 +84,17 @@ void add_copy(char ISBN[],int* num_copies)
     }
     else printf("\nThis book doesn't exist");
 }
-
+\\delete a book
+void delete_book(char ISBN[])
+{
+    int index=search_ISBN(ISBN);
+    int j=index;
+    if(index!=-1)
+        while(j<i)
+        {
+          book_array[j]=book_array[j+1];
+          j++;
+        }
+    else printf("\nThis book doesn't exist"); >> or any action 
+}
 
