@@ -15,4 +15,11 @@ typedef struct
     int copies;
     int current;
 } book;
-
+void insert_book(void);
+void show(book toShow);
+void search_title(char search[]);
+int search_ISBN(char search[]);
+void search_author(char search[]);
+void search_publisher(char search[]);
+void add_copy(char ISBN[],int* num_copies);
+void delete_book(char ISBN[]);
