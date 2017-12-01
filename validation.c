@@ -13,3 +13,14 @@ bool vali_date(dateStruct date)
     else if (date.year!=2017) return false;
     else return true;
 }
+
+char* validate_mail(char* email) {
+    for (char* ptr = email; *ptr; ptr++) {
+        if (*ptr == '@' && ptr != email) {
+            /// check that we saw at least one character
+            return ptr+1;
+        } else if (*ptr == ' ') { ///email should not have spaces in it
+            return 0;
+        }
+    }
+    return 0;
