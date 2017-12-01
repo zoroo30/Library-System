@@ -11,7 +11,7 @@ typedef struct
     char author[10];//same
     char publisher[10];//same
     char ISBN[20];
-    dateStruct* date;
+    dateStruct date;
     int copies;
     int current;
 } book;
