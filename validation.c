@@ -7,7 +7,7 @@ bool validateNegative(int n)
 }
 bool take_vali_date(){
  char buffer[10];//store date as string
-  gets(buffer);
+   fgets(buffer,sizeof(buffer),stdin);
   //use sscanf to extract numbers from string with formast dd/mm/yyyy
   int check =sscanf(buffer,"%d/%d/%d",&(borrow_array[rw].whenBorrow.day),&(borrow_array[rw].whenBorrow.month),&(borrow_array[rw].whenBorrow.year));
   if(check!=3) return false;//check if sscanf couldn't fill all variables with numbers
