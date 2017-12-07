@@ -5,13 +5,20 @@ bool validateNegative(int n)
     if(n<0) return false;
     else return true;
 }
+bool take_vali_date(){
+ char buffer[10];//store date as string
+  gets(buffer);
+  //use sscanf to extract numbers from string with formast dd/mm/yyyy
+  int check =sscanf(buffer,"%d/%d/%d",&(borrow_array[rw].whenBorrow.day),&(borrow_array[rw].whenBorrow.month),&(borrow_array[rw].whenBorrow.year));
+  if(check!=3) return false;//check if sscanf couldn't fill all variables with numbers
 
-bool vali_date(dateStruct date)
-{
-    if(date.day<1||date.day>31) return false;
-    else if(date.month<1||date.month>12) return false;
-    else if (date.year!=2017) return false;
-    else return true;
+  else //validate those numbers entered
+  {
+      if(borrow_array[rw].whenBorrow.day<0||borrow_array[rw].whenBorrow.day>30) return false;
+      else if(borrow_array[rw].whenBorrow.month<0||borrow_array[rw].whenBorrow.month>13) return false;
+      else if(borrow_array[rw].whenBorrow.year!=2017) return false;
+      else return true;
+  }
 }
 
 int validate_mail(char *s)
