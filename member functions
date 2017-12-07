@@ -1,17 +1,16 @@
-//registeration
-//na2es validation of all inputs
 void registeration(void)
 {
-   member inserted;
-   gets(inserted.name);
-   scanf("%d",&(member_array[i].ID));
-   scanf("%d",&(member_array[i].address.buildNum));
-   gets(member_array[i].address.city);
-   gets(member_array[i].address.street);
-   scanf("%d%d",&(member_array[i].mobile),&(member_array[i].age));
-   gets(member_array[i].email.name);
-   gets(member_array[i].email.domain);
-   member_array[i]=inserted;
-   i++;
+    //when register auto-initialize numOfBooksBorrowed to zero
+    fgets(member_array[mm].name,sizeof(member_array[mm].name),stdin);
+    scanf("%d",&(member_array[mm].ID));
+    scanf("%d",&(member_array[mm].address.buildNum));
+    fgets(member_array[mm].address.city,sizeof(member_array[mm].address.city),stdin);
+    fgets(member_array[mm].address.street,sizeof(member_array[mm].address.street),stdin);
+    scanf("%d%d",&(member_array[mm].mobile),&(member_array[mm].age));
+    fgets(member_array[mm].email.name,sizeof(member_array[mm].email.name),stdin);
+    fgets(member_array[mm].email.domain,sizeof(member_array[mm].email.domain),stdin);
+    member_array[mm].booksBorrowed=0;
+    mm++;
     return ;
+
 }
