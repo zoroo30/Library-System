@@ -94,6 +94,7 @@ void delete_book(char ISBN[])
           book_array[j]=book_array[j+1];
           j++;
         }
+    //i--; becoz i deleted a book..notSure
     else printf("\nThis book doesn't exist");
     return;
 }
