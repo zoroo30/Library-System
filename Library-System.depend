@@ -1,6 +1,20 @@
 # depslib dependency file v1.0
-1511591805 source:d:\learn\c_toutorials\projects\library-system\main.c
+1512052837 source:d:\learn\c_toutorials\projects\library-system\main.c
 	<stdio.h>
 	<stdlib.h>
-	<strings.h>
+	"navigation.h"
+
+1512032470 d:\learn\c_toutorials\projects\library-system\navigation.h
+	"books.h"
+	"members.h"
+	"borrowing.h"
+	"validation.h"
+
+1512032403 d:\learn\c_toutorials\projects\library-system\books.h
+
+1512048279 d:\learn\c_toutorials\projects\library-system\members.h
+
+1512052208 d:\learn\c_toutorials\projects\library-system\borrowing.h
+
+1512050537 d:\learn\c_toutorials\projects\library-system\validation.h
 

@@ -31,9 +31,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Navigation.h" />
+		<Unit filename="books.h" />
+		<Unit filename="borrowing.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="members.h" />
+		<Unit filename="validation.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
