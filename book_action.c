@@ -1,7 +1,11 @@
-\\global variables
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <string.h>
+#include <stdbool.h>
+#include "book_action.h"
 book book_array[50];
-int i=5;\\assume library has 6 books saved already
-\\insert a new book to global ARRAY (not file)
+int i=5;
 void insert_book(void)
 {
     book inserted;
@@ -16,7 +20,6 @@ void insert_book(void)
     return ;
 }
 
-\\display function
 void show(book toShow)
 {
     printf("Title: %s\n",toShow.title);
@@ -26,7 +29,7 @@ void show(book toShow)
     printf("Date: %d\\%d\\%d\n",toShow.date.day,toShow.date.month,toShow.date.year);
     printf("available Copies: %d\nCurrent Copies: %d\n",toShow.copies,toShow.current);
 }
-\\function to search by title 
+
 void search_title(char search[])
 {
     int j=0;
@@ -38,7 +41,7 @@ void search_title(char search[])
     else show(book_array[j]);
 
 }
-\\search by ISBN
+
 int search_ISBN(char search[])
 {
     int j=0;
@@ -51,7 +54,6 @@ int search_ISBN(char search[])
 
 }
 
-\\function to search by author
 void search_author(char search[])
 {
     int j=0;
@@ -63,7 +65,6 @@ void search_author(char search[])
     else show(book_array[j]);
 
 }
-\\function to search by publisher
 void search_publisher(char search[])
 {
     int j=0;
@@ -75,7 +76,6 @@ void search_publisher(char search[])
     else show(book_array[j]);
 
 }
-
 void add_copy(char ISBN[],int* num_copies)
 {
     if(search_ISBN(ISBN)!=-1)
@@ -84,7 +84,6 @@ void add_copy(char ISBN[],int* num_copies)
     }
     else printf("\nThis book doesn't exist");
 }
-\\delete a book
 void delete_book(char ISBN[])
 {
     int index=search_ISBN(ISBN);
@@ -95,6 +94,7 @@ void delete_book(char ISBN[])
           book_array[j]=book_array[j+1];
           j++;
         }
-    else printf("\nThis book doesn't exist"); >> or any action 
+    //i--; becoz i deleted a book..notSure
+    else printf("\nThis book doesn't exist");
+    return;
 }
-
