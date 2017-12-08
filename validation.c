@@ -5,18 +5,17 @@ bool validateNegative(int n)
     if(n<0) return false;
     else return true;
 }
-bool take_vali_date(){
- char buffer[10];//store date as string
-   fgets(buffer,sizeof(buffer),stdin);
-  //use sscanf to extract numbers from string with formast dd/mm/yyyy
-  int check =sscanf(buffer,"%d/%d/%d",&(borrow_array[rw].whenBorrow.day),&(borrow_array[rw].whenBorrow.month),&(borrow_array[rw].whenBorrow.year));
+
+bool vali_date(char buffer[]){
+  int dd,mm,yyyy;
+  int check = sscanf(buffer,"%d/%d/%d",&dd,&mm,&yyyy);
   if(check!=3) return false;//check if sscanf couldn't fill all variables with numbers
 
   else //validate those numbers entered
   {
-      if(borrow_array[rw].whenBorrow.day<0||borrow_array[rw].whenBorrow.day>30) return false;
-      else if(borrow_array[rw].whenBorrow.month<0||borrow_array[rw].whenBorrow.month>12) return false;
-      else if(borrow_array[rw].whenBorrow.year!=2017) return false;
+      if(dd<0||dd>30) return false;
+      else if(mm<0||mm>12) return false;
+      else if(yyyy!=2017) return false;
       else return true;
   }
 }
