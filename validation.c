@@ -15,7 +15,7 @@ bool take_vali_date(){
   else //validate those numbers entered
   {
       if(borrow_array[rw].whenBorrow.day<0||borrow_array[rw].whenBorrow.day>30) return false;
-      else if(borrow_array[rw].whenBorrow.month<0||borrow_array[rw].whenBorrow.month>13) return false;
+      else if(borrow_array[rw].whenBorrow.month<0||borrow_array[rw].whenBorrow.month>12) return false;
       else if(borrow_array[rw].whenBorrow.year!=2017) return false;
       else return true;
   }
