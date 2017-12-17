@@ -5,14 +5,19 @@
 #include <stdbool.h>
 #include "book_action.h"
 book book_array[50];
-int i=5;
+int i=0;
 void insert_book(void)
 {
     book inserted;
-    gets(inserted.title);
-    gets(inserted.author);
-    gets(inserted.publisher);
     gets(inserted.ISBN);
+    if(search_ISBN(inserted.ISBN)!=-1) printf("this book already exists!\n");
+    fflush(stdin);
+    gets(inserted.author);
+    fflush(stdin);
+    gets(inserted.publisher);
+    fflush(stdin);
+    gets(inserted.title);
+    fflush(stdin);
     scanf("%d%d",&(inserted.copies),&(inserted.current));
     scanf("%d%d%d",&(inserted.date.day),&(inserted.date.month),&(inserted.date.year));
     book_array[i]=inserted;
@@ -91,10 +96,9 @@ void delete_book(char ISBN[])
     if(index!=-1)
         while(j<i)
         {
-          book_array[j]=book_array[j+1];
-          j++;
+            book_array[j]=book_array[j+1];
+            j++;
         }
-    //i--; becoz i deleted a book..notSure
     else printf("\nThis book doesn't exist");
     return;
 }
