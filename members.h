@@ -1,3 +1,6 @@
+#ifndef MEMBER_H_INCLUDED
+#define MEMBER_H_INCLUDED
+
 typedef struct
 {
     int buildNum;
@@ -23,4 +26,10 @@ typedef struct
 
 extern int current_member_index;
 
+
 int insert_member();
+int borrow_book(void);
+void registeration(void);
+int search_ID(int );
+
+#endif // MEMBER_H_INCLUDED

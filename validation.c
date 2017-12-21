@@ -119,7 +119,6 @@ void printSuccess(char *Message) {
     return;
 }
 
-
 void RemoveSpaces(char* source)
 {
   char* i = source;
@@ -232,5 +231,12 @@ int validateMail(char *s)
 
 
     if (s[ind3] == 'i' && s[ind3+1] == 'l') return 1;
+    else return 0;
+}
+
+int mobile(){
+    int phone,start,end;
+    scanf("  %n%d%n",&start,&phone,&end);
+    if (end > 0 && (end-start)==11 && phone > 0) return 1;
     else return 0;
 }

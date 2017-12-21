@@ -1,5 +1,9 @@
+#ifndef BOOK_ACTION_H_INCLUDED
+#define BOOK_ACTION_H_INCLUDED
+
 typedef struct
 {
+
     int day;
     int month;
     int year;
@@ -31,3 +35,4 @@ void search_author(char search[]);
 void search_publisher(char search[]);
 void add_copy(char ISBN[],int* num_copies);
 void delete_book(int index);
+#endif // BOOK_ACTION_H_INCLUDED

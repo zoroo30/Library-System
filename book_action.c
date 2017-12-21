@@ -447,8 +447,8 @@ void delete_book(int index)
     {
         while(j<i)
         {
-          book_array[j]=book_array[j+1];
-          j++;
+            book_array[j]=book_array[j+1];
+            j++;
         }
         i--;
         current_book_index = -1;
