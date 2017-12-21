@@ -32,12 +32,21 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Navigation.h" />
-		<Unit filename="books.h" />
+		<Unit filename="book_action.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="book_action.h" />
 		<Unit filename="borrowing.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="members.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="members.h" />
+		<Unit filename="validation.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="validation.h" />
 		<Extensions>
 			<code_completion />

@@ -1,8 +1,8 @@
 typedef struct
 {
     int buildNum;
-    char street[10];
-    char city[10];
+    char street[100];
+    char city[100];
 } addressStruct;
 typedef struct
 {
@@ -12,11 +12,15 @@ typedef struct
 } emailStruct;
 typedef struct
 {
-    char name[10];
+    char name[100];
     int ID;
     addressStruct address;
-    long int mobile;
+    char mobile[13];
     int age;
-    emailStruct email;
+    char email[100];
 } member;
-int search_ID(int ID);
+
+
+extern int current_member_index;
+
+int insert_member();
