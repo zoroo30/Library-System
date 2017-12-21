@@ -12,13 +12,13 @@
 	"validation.h"
 	<windows.h>
 
-1513761649 d:\learn\c_toutorials\projects\library-system\book_action.h
+1513842582 d:\learn\c_toutorials\projects\library-system\book_action.h
 
 1513838054 d:\learn\c_toutorials\projects\library-system\members.h
 
 1513027204 d:\learn\c_toutorials\projects\library-system\borrowing.h
 
-1513438389 d:\learn\c_toutorials\projects\library-system\validation.h
+1513842775 d:\learn\c_toutorials\projects\library-system\validation.h
 
 1513835547 source:d:\learn\c_toutorials\projects\library-system\validation.c
 	<stdbool.h>
@@ -28,7 +28,7 @@
 	<windows.h>
 	"validation.h"
 
-1513761787 source:d:\learn\c_toutorials\projects\library-system\book_action.c
+1513842255 source:d:\learn\c_toutorials\projects\library-system\book_action.c
 	"book_action.h"
 	<stdlib.h>
 	<stdio.h>
