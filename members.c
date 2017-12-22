@@ -4,20 +4,13 @@
 #include <windows.h>
 #include "validation.h"
 
-/*
- = {{"Mohamed",1,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",2,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",3,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",4,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",5,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",6,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"},
-                            {"Mohamed",7,{1,"street","city"},"1097664886",11,"mohamed@yahoo.com"}}
-                            */
 
-member member_array[100];
-int members_number = 0;
-int member_displayed[100];
-int memeber_displayed_number = 0;
+
+member member_array[100] = {{"Mohamed","Ahmed",1,{1,"street","city"},"01097664886",11,"mohamed@yahoo.com",0}};
+static int i = 1;
+static int member_next_id = 2;
+int members_displayed[100];
+int members_displayed_number = 0;
 
 int current_member_index = -1, member_edit_success = 0, member_delete_success = -1;
 
@@ -30,18 +23,30 @@ int insert_member(int index)
         printf("\nEnter '.' if you want to keep the previous field value\n");
     }
 
-    if(members_number != 100 || index != -1) {
+    if(i != 100 || index != -1) {
         member inserted;
         char buffer[13];
         char email_holder[100];
+        char mobile_holder[13];
 
-        inserted.ID = members_number;
-        input("\nEnter member name (required) [100] : ",inserted.name,100,"Name",1);
+        if(index == -1){
+            inserted.ID = member_next_id;
+            inserted.booksBorrowed = 0;
+            printf("\nMember ID : %04d", member_next_id);
+        }
+        else{
+            inserted.ID = member_array[index].ID;
+            printf("\nMember ID : %04d", member_array[index].ID);
+        }
 
-        input("Enter city [100] : ",inserted.address.city,100,"address",0);
-        input("Enter street [100] : ",inserted.address.street,100,"street",0);
+        input("\nEnter member first name (required) [25] : ",inserted.first_name,25,"First name",1);
+        input("Enter member last name (required) [25] : ",inserted.last_name,25,"Last name",1);
 
-        input("Enter building number [100] : ",buffer,11,"building number",0);
+        input("Enter city [100] : ",inserted.address.city,100,"City",0);
+        input("Enter street [100] : ",inserted.address.street,100,"Street",0);
+
+        input("Enter building number [100] : ",buffer,11,"Building number",0);
+        inserted.address.buildNum = 0;
         if (!(index != -1 && strcmp(buffer,".") == 0))
         {
             if(strcmp(buffer,"-") != 0){
@@ -64,6 +69,7 @@ int insert_member(int index)
         }
 
         input("Enter member age : ",buffer,11,"Age",0);
+        inserted.age = 0;
         if (!(index != -1 && strcmp(buffer,".") == 0))
         {
             if(strcmp(buffer,"-") != 0){
@@ -85,55 +91,49 @@ int insert_member(int index)
             inserted.age = member_array[index].age;
         }
 
-        input("Enter member mobile number : 01",buffer,11,"mobile",0);
-        if (!(index != -1 && strcmp(buffer,".") == 0))
-        {
-            if(strcmp(buffer,"-") != 0){
-                switch(validateInteger(buffer)){
-                    case 0:
-                        addError("Enter a valid mobile number","");
-                    case 1:
-                        sscanf(buffer,"%l\n",&inserted.mobile);
-                        if((int)inserted.mobile < 0){
-                            addError("Enter a valid mobile number","");
-                        }
-                    default:
-                        break;
-                }
-            }
-        }
-        else
-        {
-            strcpy(inserted.mobile,member_array[index].mobile);
-        }
+        input("Enter member mobile number (01XXXXXXXXX) : ",mobile_holder,12,"mobile",0);
+        if(strcmp(mobile_holder,"-") == 0)
+            strcpy(inserted.mobile,"-");
+        else if(!(strcmp(mobile_holder,".") == 0 && index != -1) && validateMobile(mobile_holder))
+            strcpy(inserted.mobile,mobile_holder);
 
 
-        input("Enter member email [100] : ",inserted.email,30,"email",0);
+        input("Enter member email : ",email_holder,100,"email",0);
+        if(strcmp(email_holder,"-") == 0)
+            strcpy(inserted.email,"-");
+        else if(!(strcmp(email_holder,".") == 0 && index != -1) && check_email(email_holder))
+            if(validateEmail(email_holder))
+                strcpy(inserted.email,email_holder);
+            else
+                addError("Enter a valid email address","");
+
 
         if(errors_number == 0) {
             printSuccess((index == -1) ? "The member data has been successfully added!" : "The member data has been successfully updated!");
             if(index == -1)
             {
-                member_array[members_number] = inserted;
-                //printf("%s  -  %s  -  %s  -  %s  -  %s  -  %d  -  %d  -  %s", member_array[i].title, member_array[i].author, member_array[i].publisher, member_array[i].ISBN, buffer, member_array[i].copies, member_array[i].current, member_array[i].category);
-                members_number++;
+                member_array[i] = inserted;
+                //printf("%04d  -  %s %s  -  (%d  -  %s  -  %s)  -  %s  -  %s  -  %d",member_array[i].ID, member_array[i].first_name, member_array[i].last_name, member_array[i].address.buildNum,member_array[i].address.street, member_array[i].address.city, member_array[i].email, member_array[i].mobile, member_array[i].age);
+                i++;
+                member_next_id++;
             } else {
                 member_edit_success = 1;
-                if(strcmp(inserted.name,".") != 0)
-                    strcpy(member_array[index].name,inserted.name);
+                if(strcmp(inserted.first_name,".") != 0)
+                    strcpy(member_array[index].first_name,inserted.first_name);
+                if(strcmp(inserted.last_name,".") != 0)
+                    strcpy(member_array[index].last_name,inserted.last_name);
                 if(strcmp(inserted.address.street,".") != 0)
                     strcpy(member_array[index].address.street,inserted.address.street);
                 if(strcmp(inserted.address.city,".") != 0)
-                    strcpy(member_array[index].address.street,inserted.address.street);
+                    strcpy(member_array[index].address.city,inserted.address.city);
 
                 member_array[index].address.buildNum = inserted.address.buildNum;
                 member_array[index].age = inserted.age;
 
-                if(strcmp(inserted.mobile,".") != 0)
+                if(strcmp(mobile_holder,".") != 0)
                     strcpy(member_array[index].mobile,inserted.mobile);
 
-
-                if(strcmp(inserted.email,".") != 0)
+                if(strcmp(email_holder,".") != 0)
                     strcpy(member_array[index].email,inserted.email);
             }
             return 1;
@@ -144,28 +144,26 @@ int insert_member(int index)
     return 0;
 }
 
-
-
-/*
 int display_members(member members[100]) {
     if(i != 0) {
         int y;
         members_displayed_number = 0;
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-        printf("\n%-30s   %-30s   %-15s   %-15s   %-18s   %-10s   %-10s   %-15s\n","
-               member ISBN","
-               member TITLE","AUTHOR","PUBLISHER","PUBLICATION DATE","COPIES","AVALIBLE","CATEGORY");
-        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
         for(y = 0; y<i; y++) {
-            add_
-            member_record(y);
-            display_
-
-            member_record(
-
-
-                          members,y);
+            add_member_record(y);
         }
+    }
+
+    int z;
+
+    if(members_displayed_number == 1) {
+        display_member(members_displayed[0]);
+    }
+    else if(members_displayed_number != 0) {
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
+        printf("\n%-7s   %-30s   %-30s   %-15s   %-30s   %-10s\n","ID","NAME","ADDRESS","MOBILE","EMAIL","AGE");
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+        for(z=0;z<members_displayed_number;z++)
+            display_member_record(members,members_displayed[z]);
     }
 
     if(member_delete_success == 0){
@@ -179,27 +177,33 @@ int display_members(member members[100]) {
     return i;
 }
 
-void add_
-
-member_record(int y) {
-    members_displayed[
-    members_displayed_number] = y;
-
+void add_member_record(int y) {
+    members_displayed[members_displayed_number] = y;
     members_displayed_number++;
 }
 
-void display_member_record(
-                           member
-                           members[100], int y) {
-    if(member_edit_success == 1 && current_
-       member_index == y)
+void display_member_record(member members[100], int y) {
+    if(member_edit_success == 1 && current_member_index == y)
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 47);
+    //printf("\n%-10s   %-51s   %-50s   %-15s   %-30s   %-10s\n","ID","NAME","ADDRESS","MOBILE","EMAIL","AGE");
 
-    if(members[y].date.day != 0)
+    char address[200];
+    char name[55];
+
+    get_address(address,y,members);
+    get_name(name,y,members);
+
+    if(members[y].age != 0)
         //%-30.30s   %-30.30s   %-15.15s   %-15.15s
-        printf("%-30s   %-28.28s%-2.2s   %-13.13s%-2.2s   %-13.13s%-2.2s   %02d/%02d/%04d           %-10d   %-10d   %-13.13s%-2.2s\n",members[y].ISBN,members[y].title,(strlen( members[y].title)>28) ? ".." : "",members[y].author,(strlen(members[y].author)>13) ? ".." : "",members[y].publisher,(strlen(members[y].publisher)>13) ? ".." : "",members[y].date.day,members[y].date.month,members[y].date.year,members[y].copies,members[y].current, members[y].category,(strlen(members[y].category)>13) ? ".." : "");
+        printf("%04d      %-28.28s%-2.2s   %-28.28s%-2.2s   %-13.13s%-2.2s   %-28.28s%-2.2s   %-10d\n",
+               members[y].ID,name,(strlen(name)>28) ? ".." : "",address,(strlen(address)>28) ? ".." : "",
+               members[y].mobile,(strlen(members[y].mobile)>13) ? ".." : "",
+               members[y].email,(strlen(members[y].email)>28) ? ".." : "",members[y].age);
     else
-        printf("%-30s   %-28.28s%-2.2s   %-13.13s%-2.2s   %-13.13s%-2.2s   -                    %-10d   %-10d   %-13.13s%-2.2s\n",members[y].ISBN,members[y].title,(strlen(members[y].title)>28) ? ".." : "",members[y].author,(strlen(members[y].author)>13) ? ".." : "",members[y].publisher,(strlen(members[y].publisher)>13) ? ".." : "", members[y].copies, members[y].current, members[y].category,(strlen(members[y].category)>13) ? ".." : "");
+        printf("%04d      %-28.28s%-2.2s   %-28.28s%-2.2s   %-13.13s%-2.2s   %-28.28s%-2.2s   %-10s\n",
+               members[y].ID,name,(strlen(name)>28) ? ".." : "",address,(strlen(address)>28) ? ".." : "",
+               members[y].mobile,(strlen(members[y].mobile)>13) ? ".." : "",
+               members[y].email,(strlen(members[y].email)>28) ? ".." : "", "-");
 
     if(member_edit_success == 1 && current_member_index == y){
         member_edit_success = 0;
@@ -208,19 +212,55 @@ void display_member_record(
     }
 }
 
+void get_address(char address[200],int y,member members[]){
+    strcpy(address,"");
+
+    if(members[y].address.buildNum != 0)
+    {
+        sprintf(address,"%ld", members[y].address.buildNum);
+        strcat(address," ");
+    }
+
+    if(strcmp(members[y].address.street,"-") != 0)
+    {
+        strcat(address,members[y].address.street);
+        strcat(address," ");
+    }
+
+    if(strcmp(members[y].address.city,"-") != 0)
+        strcat(address,members[y].address.city);
+
+    if(strcmp(members[y].address.street,"-") == 0 && strcmp(members[y].address.city,"-") == 0 && members[y].address.buildNum == 0)
+    {
+        strcat(address,"-");
+    }
+    return;
+}
+
+void get_name(char name[55],int y,member members[]){
+    strcpy(name,"");
+
+    strcpy(name,members[y].first_name);
+    strcat(name," ");
+    strcat(name,members[y].last_name);
+    return;
+}
+
+
 int search_members(member members[100]){
     char search_txt[100];
     strcpy(search_txt,"");
-    int y, z, found = 1,previous_members_displayed_number = members_displayed_number, number, is_date, dd,mm,yy;
+    int y, z, found = 1,previous_members_displayed_number = members_displayed_number, number;
     members_displayed_number = 0;
     input("Enter search term : ", search_txt, 100, "", 0);
     if(strcmp(search_txt,"./menu") == 0) {return -1;}
     if(strcmp(search_txt,"./edit") == 0 && current_member_index != -1) {return -2;}
-    if(strcmp(search_txt,"./copies") == 0 && current_member_index != -1) {return -3;}
-    if(strcmp(search_txt,"./delete") == 0 && current_member_index != -1) {return -4;}
+    if(strcmp(search_txt,"./delete") == 0 && current_member_index != -1) {return -3;}
     int search_again = checkSearchText(search_txt);
+    char name[55];
+    char address[200];
     clrscr();
-    operation_header(0, "Search members");
+    operation_header(6, "Advanced search (edit - delete)");
     if(strcmp(search_txt,"-") == 0)
     {
         display_members(members);
@@ -229,6 +269,8 @@ int search_members(member members[100]){
 
     for(y = 0; y<i; y++)
     {
+        get_address(address,y,members);
+        get_name(name,y,members);
         if(search_again && previous_members_displayed_number != 0 && previous_members_displayed_number != 1)
         {
             found = 0;
@@ -243,27 +285,14 @@ int search_members(member members[100]){
         }
         errors_number = 0;
         if(found == 1){
-            if(strcmpi(members[y].ISBN,search_txt) == 0 || stristr(members[y].title,search_txt) != NULL || stristr(members[y].author,search_txt) != NULL || stristr(members[y].publisher,search_txt) != NULL || stristr(members[y].category,search_txt) != NULL)
+            if(stristr(name,search_txt) != NULL || stristr(address,search_txt) != NULL || stristr(members[y].email,search_txt) != NULL || strcmp(members[y].mobile,search_txt) == 0)
             {
                 add_member_record(y);
             }
             else if(validateInteger(search_txt))
             {
                 sscanf(search_txt,"%d\n",&number);
-                if(members[y].copies == number || members[y].current == number || ((members[y].date.day == number || members[y].date.month == number || members[y].date.year == number) && number != 0))
-                    add_member_record(y);
-            }
-            else if(is_date = validateDate(search_txt))
-            {
-                switch(is_date){
-                    case 1:
-                        sscanf(search_txt,"%d/%d/%d",&dd,&mm,&yy);
-                    case 2:
-                        sscanf(search_txt,"%d-%d-%d",&dd,&mm,&yy);
-                    default:
-                        break;
-                }
-                if(members[y].date.day == dd && members[y].date.month == mm && members[y].date.year == yy)
+                if(number != 0 && (members[y].ID == number || members[y].age == number))
                     add_member_record(y);
             }
         }
@@ -273,7 +302,7 @@ int search_members(member members[100]){
     }
     else if(members_displayed_number != 0) {
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-        printf("\n%-30s   %-30s   %-15s   %-15s   %-18s   %-10s   %-10s   %-15s\n","member ISBN","member TITLE","AUTHOR","PUBLISHER","PUBLICATION DATE","COPIES","AVALIBLE","CATEGORY");
+        printf("\n%-7s   %-30s   %-30s   %-15s   %-30s   %-10s\n","ID","NAME","ADDRESS","MOBILE","EMAIL","AGE");
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
         for(z=0;z<members_displayed_number;z++)
             display_member_record(members,members_displayed[z]);
@@ -289,76 +318,35 @@ int search_members(member members[100]){
 
     printf("\nYou searched for : %s ", search_txt);
 
-    return books_displayed_number;
-}
-
-//void replace_records()
-void display_info(char title[], char message[]) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    printf(" %s",message);
-    return;
-}
-
-void display_date_info(char title[], int d, int m, int y) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    if(d != 0)
-        printf(" %02d/%02d/%04d",d,m,y);
-    else
-        printf(" -");
-    return;
-}
-
-void display_int_info(char title[], int integer) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    printf(" %d",integer);
-    return;
+    return members_displayed_number;
 }
 
 void display_member(int index)
 {
-    display_info("member ISBN : ",member_array[index].ISBN);
-    display_info("member TITLE : ",member_array[index].title);
-    display_info("AUTHOR : ",member_array[index].author);
-    display_info("PUBLISHER : ",member_array[index].publisher);
-    display_date_info("PUBLICATION DATE : ",member_array[index].date.day, member_array[index].date.month, member_array[index].date.year);
-    display_int_info("COPIES : ",member_array[index].copies);
-    display_int_info("AVALIBLE : ",member_array[index].current);
-    display_info("CATEGORY : ",member_array[index].category);
+    char name[55];
+    char address[200];
+    get_address(address,index,member_array);
+    get_name(name,index,member_array);
+    display_int_info("MEMBER ID : ",member_array[index].ID);
+    display_info("NAME : ",name);
+    display_info("ADDRESS : ",address);
+    display_info("MOBILE : ",member_array[index].mobile);
+    display_info("EMAIL : ",member_array[index].email);
+    if(member_array[index].age != 0)
+        display_int_info("AGE : ",member_array[index].age);
+    else
+        display_info("AGE : ", "-");
+    display_int_info("BORROWED BOOKS : ",member_array[index].booksBorrowed);
     printf("\n");
-    current_
-    member_index = index;
+    current_member_index = index;
     return;
 }
 
+/*
 void search_title(char search[])
 {
     int j=0;
     while(strstr(member_array[j].title,search)== NULL && j<i)
-=======
-#include <string.h>
-#include <stdbool.h>
-#include "member.h"
-#include "book_action.h"
-#include"validation.h"
-#include"borrow.h"
-
-book book_array[50];
-member member_array[50];
-borrow borrow_array[50];
-/**int bk=0;
-int mm=0;
-int rw=0;*
-int search_ID(int ID)
-{
-    int j=0;
-    while(member_array[j].ID!=ID && j<2)
->>>>>>> 90204d48c773eb50489d78dd4c3977b4f8df7b8f
     {
         j++;
     }
@@ -366,7 +354,6 @@ int search_ID(int ID)
     else display_member(j);
 
 }
-<<<<<<< HEAD
 
 int search_ISBN(member members[100], char subtitle[])
 {
@@ -421,14 +408,15 @@ void search_publisher(char search[])
     else display_member(j);
 
 }
-void add_copy(char ISBN[],int* num_copies)
+/*void add_copy(char ISBN[],int* num_copies)
 {
     if(search_ISBN(ISBN)!=-1)
     {
         *num_copies+=1;
     }
     else printf("\nThis member doesn't exist");
-}
+}*/
+
 void delete_member(int index)
 {
     int j=index;
@@ -436,46 +424,27 @@ void delete_member(int index)
     {
         while(j<i)
         {
-          member_array[j]=member_array[j+1];
-          j++;
+            member_array[j]=member_array[j+1];
+            j++;
         }
         i--;
         current_member_index = -1;
         member_delete_success = 1;
     }
     else printf("\nThis member doesn't exist");
+
     return;
 }
 
-int check_ISBN(char ISBN_holder[]){
+
+int check_email(char email_holder[]){
     int y;
     for(y = 0; y<i; y++){
-        if(strcmpi(member_array[y].ISBN,ISBN_holder) == 0)
+        if(strcmpi(member_array[y].email,email_holder) == 0)
         {
-            addError("This ISBN is already used for another member!","");
+            addError("This email is already used for another member!","");
             return 0;
         }
     }
     return 1;
 }
-
-=======
-void registeration(void)
-{
-
-    //when register auto-initialize numOfBooksBorrowed to zero
-    fgets(member_array[mm].name,sizeof(member_array[mm].name),stdin);
-    scanf("%d",&(member_array[mm].ID));
-    scanf("%d",&(member_array[mm].address.buildNum));
-    fgets(member_array[mm].address.city,sizeof(member_array[mm].address.city),stdin);
-    fgets(member_array[mm].address.street,sizeof(member_array[mm].address.street),stdin);
-    scanf("%d%d",&(member_array[mm].mobile),&(member_array[mm].age));
-    fgets(member_array[mm].email.name,sizeof(member_array[mm].email.name),stdin);
-    fgets(member_array[mm].email.domain,sizeof(member_array[mm].email.domain),stdin);
-    member_array[mm].booksBorrowed=0;
-    mm++;
-    return ;
-
-}
->>>>>>> 90204d48c773eb50489d78dd4c3977b4f8df7b8f
-*/

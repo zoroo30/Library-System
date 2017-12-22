@@ -26,7 +26,7 @@ book book_array[100] = {{"Welcome To C","Ahmed Tarek kamal aboughanima","-","232
                         {"NOt book","Ahmed Tarek","-","23213-123-12123",{20,3,2011},6,6,"-"},
                         {"Blah blah","Ahmed Tarek","-","23213-123-12123",{3,1,1998},12,12,"-"},
                         {"no yes","Ahmed Tarek","-","23213-123-12123",{7,11,1997},1,1,"-"}};
-int i=8;
+static int i=8;
 
 int books_displayed[100];
 int books_displayed_number = 0;
@@ -198,13 +198,22 @@ int display_books(book books[100]) {
     if(i != 0) {
         int y;
         books_displayed_number = 0;
+        for(y = 0; y<i; y++) {
+            add_book_record(y);
+        }
+    }
+
+    int z;
+
+    if(books_displayed_number == 1) {
+        display_book(books_displayed[0]);
+    }
+    else if(books_displayed_number != 0) {
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
         printf("\n%-30s   %-30s   %-15s   %-15s   %-18s   %-10s   %-10s   %-15s\n","BOOK ISBN","BOOK TITLE","AUTHOR","PUBLISHER","PUBLICATION DATE","COPIES","AVALIBLE","CATEGORY");
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-        for(y = 0; y<i; y++) {
-            add_book_record(y);
-            display_book_record(books,y);
-        }
+        for(z=0;z<books_displayed_number;z++)
+            display_book_record(books,books_displayed[z]);
     }
 
     if(book_delete_success == 0){
@@ -252,7 +261,7 @@ int search_books(book books[100]){
     if(strcmp(search_txt,"./delete") == 0 && current_book_index != -1) {return -4;}
     int search_again = checkSearchText(search_txt);
     clrscr();
-    operation_header(0, "Search books");
+    operation_header(0, "Advanced search (edit - delete)");
     if(strcmp(search_txt,"-") == 0)
     {
         display_books(books);
@@ -325,32 +334,7 @@ int search_books(book books[100]){
 }
 
 //void replace_records()
-void display_info(char title[], char message[]) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    printf(" %s",message);
-    return;
-}
 
-void display_date_info(char title[], int d, int m, int y) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    if(d != 0)
-        printf(" %02d/%02d/%04d",d,m,y);
-    else
-        printf(" -");
-    return;
-}
-
-void display_int_info(char title[], int integer) {
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-    printf("\n%30s",title);
-    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    printf(" %d",integer);
-    return;
-}
 
 void display_book(int index)
 {

@@ -14,11 +14,14 @@ void lower_string(char *string)
 
 int main()
 {
+
+    //display_members(member_array);
+
+
     load_menu(-1,"");
 
-    /*while(1) {
-        insert_member(-1);
-    }*/
+    //insert_member(-1);
+
 
     /*char *str;
     strcpy(str,"MOHAMED");
