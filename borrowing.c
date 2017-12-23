@@ -392,19 +392,28 @@ void display_borrow_record(borrow borrows[100], int y) {
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 47);
 
     char name[55];
-    get_name(name,member_index(borrows[y].member_id),member_array);
+    if(member_index(borrows[y].member_id) != -1)
+        get_name(name,member_index(borrows[y].member_id),member_array);
+    else
+        strcpy(name,"[deleted member]");
+
+    char book_title[100];
+    if(book_index(borrows[y].book_isbn) != -1)
+        strcpy(book_title,book_array[book_index(borrows[y].book_isbn)].title);
+    else
+        strcpy(book_title,"[deleted book]");
 
     if(borrows[y].date_returned.day != 0)
         //%-30s   %-15s   %-7s   %-15s   %-10s   %-10s   %-10s
         printf("%-30s   %-13.13s%-2.2s   %-04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           %02d/%02d/%04d\n",
-               borrows[y].book_isbn,book_array[book_index(borrows[y].book_isbn)].title,(strlen(book_array[book_index(borrows[y].book_isbn)].title)>13) ? ".." : "",
+               borrows[y].book_isbn,book_title,(strlen(book_title)>13) ? ".." : "",
                borrows[y].member_id,name,(strlen(name)>13) ? ".." : "",
                borrows[y].date_issued.day, borrows[y].date_issued.month, borrows[y].date_issued.year,
                borrows[y].date_should_return.day, borrows[y].date_should_return.month, borrows[y].date_should_return.year,
                borrows[y].date_returned.day, borrows[y].date_returned.month, borrows[y].date_returned.year);
     else
         printf("%-30s   %-13.13s%-2.2s   %-04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           -         \n",
-               borrows[y].book_isbn,book_array[book_index(borrows[y].book_isbn)].title,(strlen(book_array[book_index(borrows[y].book_isbn)].title)>13) ? ".." : "",
+               borrows[y].book_isbn,book_title,(strlen(book_title)>13) ? ".." : "",
                borrows[y].member_id,name,(strlen(name)>13) ? ".." : "",
                borrows[y].date_issued.day, borrows[y].date_issued.month, borrows[y].date_issued.year,
                borrows[y].date_should_return.day, borrows[y].date_should_return.month, borrows[y].date_should_return.year);
@@ -440,7 +449,16 @@ int search_borrows(borrow borrows[100]){
     {
 
         char name[55];
-        get_name(name,member_index(borrows[y].member_id),member_array);
+        if(member_index(borrows[y].member_id) != -1)
+            get_name(name,member_index(borrows[y].member_id),member_array);
+        else
+            strcpy(name,"[deleted member]");
+
+        char book_title[100];
+        if(book_index(borrows[y].book_isbn) != -1)
+            strcpy(book_title,book_array[book_index(borrows[y].book_isbn)].title);
+        else
+            strcpy(book_title,"[deleted book]");
 
         if(search_again && previous_borrows_displayed_number != 0 && previous_borrows_displayed_number != 1)
         {
@@ -456,7 +474,7 @@ int search_borrows(borrow borrows[100]){
         }
         errors_number = 0;
         if(found == 1){
-            if(strcmpi(borrows[y].book_isbn,search_txt) == 0 || stristr(book_array[book_index(borrows[y].book_isbn)].title,search_txt) != NULL || stristr(name,search_txt) != NULL)
+            if(strcmpi(borrows[y].book_isbn,search_txt) == 0 || stristr(book_title,search_txt) != NULL || stristr(name,search_txt) != NULL)
             {
                 add_borrow_record(y);
             }
@@ -513,10 +531,19 @@ int search_borrows(borrow borrows[100]){
 void display_borrow(int index)
 {
     char name[55];
-    get_name(name,member_index(borrow_array[index].member_id),member_array);
+    if(member_index(borrow_array[index].member_id) != -1)
+        get_name(name,member_index(borrow_array[index].member_id),member_array);
+    else
+        strcpy(name,"[deleted member]");
+
+    char book_title[100];
+    if(book_index(borrow_array[index].book_isbn) != -1)
+        strcpy(book_title,book_array[book_index(borrow_array[index].book_isbn)].title);
+    else
+        strcpy(book_title,"[deleted book]");
 
     display_info("BOOK ISBN : ",borrow_array[index].book_isbn);
-    display_info("BOOK TITLE : ",book_array[book_index(borrow_array[index].book_isbn)].title);
+    display_info("BOOK TITLE : ",book_title);
     display_int_info("MEMBER ID : ",borrow_array[index].member_id);
     display_info("MEMBER NAME : ",name);
     display_date_info("DATE ISSUED : ",borrow_array[index].date_issued.day, borrow_array[index].date_issued.month, borrow_array[index].date_issued.year);
