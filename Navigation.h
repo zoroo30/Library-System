@@ -26,7 +26,7 @@ menu_item menu_items[] = {
     {8, 6, "Advanced search (edit - delete)", "2"},
     {9, -1, "Borrow Management", "3"},
     {10, 9, "Borrow", "1"},
-    {11, 9, "Return", "2"},
+    {11, 9, "Advanced search (edit - delete)", "2"},
     {12, -1, "Administrative actions", "4"},
     {13, 12, "Overdue", "1"},
     {14, 12, "Popular", "2"},
@@ -239,6 +239,31 @@ void search_next_step(int operation_id,int parent_id, int record_index, int in_o
             members_displayed_number = 1;
         }
     }
+    else if(strcmp("borrows",section) == 0)
+    {
+        if(strcmp("1",choice)==0)
+        {
+            int sep_size;
+            if(in_operation == 0)
+                sep_size = operation_header(parent_id,"Edit borrow");
+            else
+                sep_size = operation_header(parent_id,"Edit borrow copies");
+            current_borrow_index = record_index;
+            display_borrow(record_index);
+            print_seprator(sep_size);
+            if(in_operation == 0)
+                insert_borrow(record_index);
+            else
+                edit_return_date(record_index);
+            search_next_step(operation_id,parent_id,record_index,in_operation,section);
+        }
+        else if(strcmp("2",choice)==0)
+        {
+            int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
+            display_borrow(record_index);
+            borrows_displayed_number = 1;
+        }
+    }
     return;
 }
 
@@ -332,21 +357,34 @@ void go(int operation_id,int parent_id) {
                 else if(results_number == -3) {int book_index=current_book_index; edit_copies(current_book_index); search_next_step(2,0,book_index,1,"Books"); results_number = 1;}
                 else if(results_number == -4) {
                     int book_index=current_book_index;
-                    int youSure = are_you_sure(operation_id,parent_id,sep_size);
-                    if(youSure)
+                    if(book_array[book_index].copies == book_array[book_index].current)
                     {
-                        delete_book(current_book_index);
-                        go(operation_id,parent_id);
-                    }
-                    else
-                    {
-                        //book_delete_success = 0;
+                        int book_index=current_book_index;
+                        int youSure = are_you_sure(operation_id,parent_id,sep_size);
+                        if(youSure)
+                        {
+                            delete_book(current_book_index);
+                            go(operation_id,parent_id);
+                        }
+                        else
+                        {
+                            //book_delete_success = 0;
+                            int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
+                            display_book(current_book_index);
+                            results_number = 1;
+
+                            display_info("  Delete operation has been canceled  ","");
+                        }
+                    }else {
                         int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
                         display_book(current_book_index);
                         results_number = 1;
 
-                        display_info("  Delete operation has been canceled  ","");
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+                        printf("\n  There are %d copies from this book which are borrowed by library members  ",book_array[book_index].copies - book_array[book_index].current);
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
                     }
+
                 }
                 if(results_number == 0){
                     current_book_index = -1;
@@ -431,7 +469,7 @@ void go(int operation_id,int parent_id) {
                 else if(results_number == -2) {int member_index=current_member_index; insert_member(current_member_index); search_next_step(8,6,member_index,0,"Members"); results_number = 1;}
                 else if(results_number == -3) {
                     int member_index=current_member_index;
-                    if(member_array[member_index].booksBorrowed == 0)
+                    if(member_books_number(member_array[member_index].ID,-1) == 0)
                     {
                         int youSure = are_you_sure(operation_id,parent_id,sep_size);
                         if(youSure)
@@ -454,7 +492,7 @@ void go(int operation_id,int parent_id) {
                         results_number = 1;
 
                         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
-                        printf("\n  This member borrowed %d books and has not returned them yet!  ",member_array[current_member_index].booksBorrowed);
+                        printf("\n  This member borrowed %d books and has not returned them yet!  ",member_books_number(member_array[member_index].ID,-1));
                         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
                     }
 
@@ -481,11 +519,67 @@ void go(int operation_id,int parent_id) {
             return 1;
         case 10:
             //Borrow
-
+            operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+            insert_borrow(-1);
+            next_step(operation_id,parent_id);
             return 1;
         case 11:
-            //Return
+            //Advanced_search
+            sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+            all_records_number = display_borrows(borrow_array);
 
+            if(all_records_number == 0)
+                    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+
+            printf("\n(%d results found from %d borrows)\n%s",all_records_number,all_records_number,(all_records_number == 1 || all_records_number == 0) ? "" : "to search the current results enter ',' before search term\n");
+
+            if(all_records_number == 0)
+                SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+            printf("to display all borrow leave the search term empty or enter '-'\n");
+
+            if(all_records_number == 1) {printf("\n==> edit current borrow (./edit)\n==> edit date returned (./return)\n==> delete current borrow (./delete)");}
+            printf("\n==> return to menu (./menu)");
+
+            print_seprator(sep_size);
+            while(1){
+                results_number = search_borrows(borrow_array);
+                if(results_number == -1) {load_menu(9,""); return;}
+                else if(results_number == -2) {int borrow_index=current_borrow_index; insert_borrow(current_borrow_index); search_next_step(11,9,borrow_index,0,"borrows"); results_number = 1;}
+                else if(results_number == -3) {int borrow_index=current_borrow_index; edit_return_date(current_borrow_index); search_next_step(11,9,borrow_index,1,"borrows"); results_number = 1;}
+                else if(results_number == -4) {
+                    int borrow_index=current_borrow_index;
+                    int youSure = are_you_sure(operation_id,parent_id,sep_size);
+                    if(youSure)
+                    {
+                        delete_borrow(current_borrow_index);
+                        go(operation_id,parent_id);
+                    }
+                    else
+                    {
+                        //borrow_delete_success = 0;
+                        int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
+                        display_borrow(current_borrow_index);
+                        results_number = 1;
+
+                        display_info("  Delete operation has been canceled  ","");
+                    }
+                }
+                if(results_number == 0){
+                    current_borrow_index = -1;
+                    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+                }
+                printf("\n(%d results found from %d borrows)\n%s",results_number,all_records_number,(results_number == 1 || results_number == 0) ? "" : "to search the current results enter ',' before search term\n");
+
+                if(results_number == 0)
+                    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+
+                printf("to display all borrow leave the search term empty or enter '-'\n");
+
+                if(results_number == 1) {printf("\n==> edit current borrow (./edit)\n==> edit date returned (./return)\n==> delete current borrow (./delete)");}
+                printf("\n==> return to menu (./menu)");
+                print_seprator(sep_size);
+            }
+            load_menu(0,"");
             return 1;
         case 12:
             load_menu(12,"");

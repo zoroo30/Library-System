@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "navigation.h"
 #include <string.h>
+#include "time.h"
 
 void lower_string(char *string)
 {
@@ -15,12 +16,11 @@ void lower_string(char *string)
 int main()
 {
 
-    //display_members(member_array);
+    //display_borrows(borrow_array);
 
 
     load_menu(-1,"");
 
-    //insert_member(-1);
 
 
     /*char *str;

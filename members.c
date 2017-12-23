@@ -6,8 +6,9 @@
 
 
 
-member member_array[100] = {{"Mohamed","Ahmed",1,{1,"street","city"},"01097664886",11,"mohamed@yahoo.com",0}};
-static int i = 1;
+member member_array[100] = {{"Mohamed","Ahmed",1,{1,"street","city"},"01097664886",11,"mohamed@yahoo.com",0},
+                            {"Ahmed","Tarek",2,{1,"street","city"},"01097664886",11,"ahmed.zoroo30@outlook.com",0}};
+static int i = 2;
 static int member_next_id = 2;
 int members_displayed[100];
 int members_displayed_number = 0;
@@ -101,7 +102,7 @@ int insert_member(int index)
         input("Enter member email : ",email_holder,100,"email",0);
         if(strcmp(email_holder,"-") == 0)
             strcpy(inserted.email,"-");
-        else if(!(strcmp(email_holder,".") == 0 && index != -1) && check_email(email_holder))
+        else if(!(strcmp(email_holder,".") == 0 && index != -1) && check_email(email_holder,index))
             if(validateEmail(email_holder))
                 strcpy(inserted.email,email_holder);
             else
@@ -336,7 +337,7 @@ void display_member(int index)
         display_int_info("AGE : ",member_array[index].age);
     else
         display_info("AGE : ", "-");
-    display_int_info("BORROWED BOOKS : ",member_array[index].booksBorrowed);
+    display_int_info("BORROWED BOOKS : ",member_books_number(member_array[index].ID,-1));
     printf("\n");
     current_member_index = index;
     return;
@@ -437,14 +438,40 @@ void delete_member(int index)
 }
 
 
-int check_email(char email_holder[]){
+int check_email(char email_holder[],int index){
     int y;
     for(y = 0; y<i; y++){
         if(strcmpi(member_array[y].email,email_holder) == 0)
         {
-            addError("This email is already used for another member!","");
-            return 0;
+            if(index == -1 || strcmpi(member_array[index].email,email_holder) != 0)
+            {
+                addError("This email is already used for another member!","");
+                return 0;
+            }
         }
     }
     return 1;
 }
+
+int check_member_ID(int member_ID){
+    int y;
+    for(y = 0; y<i; y++){
+        if(member_array[y].ID == member_ID)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int member_index(int id){
+    int y;
+    for(y = 0; y<i; y++){
+        if(member_array[y].ID == id)
+        {
+            return y;
+        }
+    }
+    return -1;
+}
+

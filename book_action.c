@@ -19,8 +19,8 @@ typedef struct
 */
 
 book book_array[100] = {{"Welcome To C","Ahmed Tarek kamal aboughanima","-","23213-123-12123",{10,2,2005},20,20,"-"},
-                        {"Lord of The rings","nour","-","23213-123",{0,0,0},5,5,"-"},
-                        {"Lord of The flies","nour","-","23213-12123",{0,0,0},5,5,"-"},
+                        {"Lord of The rings","nour","-","23213-123",{0,0,0},5,4,"-"},
+                        {"Lord of The flies","nour","-","23213-12123",{0,0,0},5,3,"-"},
                         {"The lord","malek","-","q23213-123-12123",{0,0,0},5,5,"-"},
                         {"Book","Ahmed Tarek","-","Q23213-123-12123",{3,4,2010},3,3,"-"},
                         {"NOt book","Ahmed Tarek","-","23213-123-12123",{20,3,2011},6,6,"-"},
@@ -48,8 +48,9 @@ int insert_book(int index)
         char term;
 
         input("\nEnter book ISBN (required) [30] : ",ISBN_holder,30,"ISBN",1);
-        if(!(strcmp(ISBN_holder,".") == 0 && index != -1) && check_ISBN(ISBN_holder))
+        if(!(strcmp(ISBN_holder,".") == 0 && index != -1) && check_ISBN(ISBN_holder,index))
             strcpy(inserted.ISBN,ISBN_holder);
+
 
         input("Enter book title (required) [100] : ",inserted.title,100,"Title",1);
         input("Enter author name [100] : ",inserted.author,100,"Author",0);
@@ -88,8 +89,17 @@ int insert_book(int index)
                         sscanf(buffer,"%d\n",&inserted.copies);
                         if(inserted.copies < 0){
                             addError("Number of copies can not be a negative value","");
-                        }else
-                            inserted.current = inserted.copies;
+                        }else{
+                            if(index == -1)
+                                inserted.current = inserted.copies;
+                            else{
+                                int crntCopies = current_copies(index,inserted.copies);
+                                if(crntCopies >= 0)
+                                    inserted.current = crntCopies;
+                                else
+                                    addError("Number of copies borrowed is bigger than the new number of copies","");
+                            }
+                        }
                     default:
                         break;
                 }
@@ -113,7 +123,10 @@ int insert_book(int index)
             } else {
                 edit_success = 1;
                 if(strcmp(ISBN_holder,".") != 0)
+                {
+                    edit_book_isbn(book_array[index].ISBN,inserted.ISBN);
                     strcpy(book_array[index].ISBN,inserted.ISBN);
+                }
                 if(strcmp(inserted.title,".") != 0)
                     strcpy(book_array[index].title,inserted.title);
                 if(strcmp(inserted.author,".") != 0)
@@ -135,6 +148,8 @@ int insert_book(int index)
     current_book_index = -1;
     return 0;
 }
+
+
 
 int edit_copies(int index)
 {
@@ -159,8 +174,17 @@ int edit_copies(int index)
                         sscanf(buffer,"%d\n",&inserted.copies);
                         if(inserted.copies < 0){
                             addError("Number of copies can not be a negative value","");
-                        }else
-                            inserted.current = inserted.copies;
+                        }else{
+                            if(index == -1)
+                                inserted.current = inserted.copies;
+                            else{
+                                int crntCopies = current_copies(index,inserted.copies);
+                                if(crntCopies >= 0)
+                                    inserted.current = crntCopies;
+                                else
+                                    addError("Number of copies borrowed is bigger than the new number of copies","");
+                            }
+                        }
                     default:
                         break;
                 }
@@ -442,14 +466,41 @@ void delete_book(int index)
     return;
 }
 
-int check_ISBN(char ISBN_holder[]){
+int check_ISBN(char ISBN_holder[],int index){
     int y;
     for(y = 0; y<i; y++){
         if(strcmpi(book_array[y].ISBN,ISBN_holder) == 0)
         {
-            addError("This ISBN is already used for another book!","");
-            return 0;
+            if(index == -1 || strcmpi(book_array[index].ISBN,ISBN_holder) != 0)
+            {
+                addError("This ISBN is already used for another book!","");
+                return 0;
+            }
         }
     }
     return 1;
+}
+
+int copies_left(char ISBN_holder[]) {
+    int y;
+    for(y = 0; y<i; y++){
+        if(strcmpi(book_array[y].ISBN,ISBN_holder) == 0)
+        {
+            if(book_array[y].current > 0)
+                return book_array[y].current;
+        }
+    }
+    addError("There is no available copies","");
+    return -1;
+}
+
+int book_index(char ISBN_holder[]){
+    int y;
+    for(y = 0; y<i; y++){
+        if(strcmpi(book_array[y].ISBN,ISBN_holder) == 0)
+        {
+            return y;
+        }
+    }
+    return -1;
 }
