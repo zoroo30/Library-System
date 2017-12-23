@@ -1,24 +1,24 @@
 # depslib dependency file v1.0
-1514020166 source:d:\learn\c_toutorials\projects\library-system\book_action.c
+1514065386 source:d:\learn\c_toutorials\projects\library-system\book_action.c
 	"book_action.h"
 	<stdlib.h>
 	<stdio.h>
 	<windows.h>
 	"validation.h"
 
-1513842582 d:\learn\c_toutorials\projects\library-system\book_action.h
+1514064493 d:\learn\c_toutorials\projects\library-system\book_action.h
 
 1513966065 d:\learn\c_toutorials\projects\library-system\validation.h
 	"book_action.h"
 
-1514006578 source:d:\learn\c_toutorials\projects\library-system\main.c
+1514065507 source:d:\learn\c_toutorials\projects\library-system\main.c
 	<stdio.h>
 	<stdlib.h>
 	"navigation.h"
 	<string.h>
 	"time.h"
 
-1514017685 d:\learn\c_toutorials\projects\library-system\navigation.h
+1514065761 d:\learn\c_toutorials\projects\library-system\navigation.h
 	"book_action.h"
 	"members.h"
 	"borrowing.h"
@@ -27,17 +27,17 @@
 
 1513926650 d:\learn\c_toutorials\projects\library-system\members.h
 
-1513997446 d:\learn\c_toutorials\projects\library-system\borrowing.h
+1514057631 d:\learn\c_toutorials\projects\library-system\borrowing.h
 	"book_action.h"
 
-1514019252 source:d:\learn\c_toutorials\projects\library-system\members.c
+1514064118 source:d:\learn\c_toutorials\projects\library-system\members.c
 	"members.h"
 	<stdlib.h>
 	<stdio.h>
 	<windows.h>
 	"validation.h"
 
-1513965808 source:d:\learn\c_toutorials\projects\library-system\validation.c
+1514058082 source:d:\learn\c_toutorials\projects\library-system\validation.c
 	<stdbool.h>
 	<stdlib.h>
 	<stdio.h>
@@ -47,7 +47,7 @@
 	<ctype.h>
 	"validation.h"
 
-1514016781 source:d:\learn\c_toutorials\projects\library-system\borrowing.c
+1514065315 source:d:\learn\c_toutorials\projects\library-system\borrowing.c
 	"borrowing.h"
 	<stdlib.h>
 	<stdio.h>
@@ -55,4 +55,18 @@
 	<time.h>
 	"validation.h"
 	"members.h"
+
+1514060435 source:d:\learn\c_toutorials\projects\library-system\files.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"borrowing.h"
+	"members.h"
+	"book_action.h"
+	"files.h"
+
+1514025324 d:\learn\c_toutorials\projects\library-system\files.h
+	"borrowing.h"
+	"members.h"
+	"book_action.h"
 

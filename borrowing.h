@@ -10,6 +10,7 @@
 
 typedef struct
 {
+    int id;
     char book_isbn[30];
     int member_id;
     dateStruct date_issued;

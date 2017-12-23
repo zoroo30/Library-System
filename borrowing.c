@@ -18,17 +18,38 @@ typedef struct
 
 */
 
-borrow borrow_array[100] = {{"23213-123",1,{10,2,2005},10,{10,2,2005},{0,0,0}},
-                            {"23213-12123",1,{10,2,2005},10,{10,2,2005},{0,0,0}},
-                            {"23213-12123",2,{10,2,2005},10,{10,2,2005},{0,0,0}}};
-static int i=3;
+borrow borrow_array[100];
+static int i=0;
+static int borrow_next_id = 0;
 
 int borrows_displayed[100];
 int borrows_displayed_number = 0;
 
 int current_borrow_index = -1, borrow_edit_success = 0, borrow_delete_success = -1;
 
-
+void initialize_borrowed()
+{
+    i=read_borrowed(borrow_array,"borrowed.dat");
+    if(i != 0)
+        i = i-1;
+    borrow_next_id = maxborrowID() + 1;
+}
+void save_borrowed()
+{
+    write_borrowed(borrow_array,i,"borrowed.dat");
+}
+int maxborrowID()
+{
+    int y,max = 0;
+    if(i != 0)
+        max = borrow_array[0].id;
+    for(y = 1; y<i; y++){
+        if(borrow_array[y].id>max){
+            max = borrow_array[y].id;
+        }
+    }
+    return max;
+}
 int insert_borrow(int index)
 {
     errors_number = 0;
@@ -50,8 +71,18 @@ int insert_borrow(int index)
             previous_day = borrow_array[index].date_returned.day;
         }
         printf("\nenter (./now) for today's date\n");
+
+        if(index == -1){
+            inserted.id = borrow_next_id;
+            printf("\nBorrow operation ID : %04d", borrow_next_id);
+        }
+        else{
+            inserted.id = borrow_array[index].id;
+            printf("\nBorrow operation ID : %04d", borrow_array[index].id);
+        }
+
         input("\nEnter borrow ISBN (required) [30] : ",ISBN_holder,30,"ISBN",1);
-        int is_exist = !check_ISBN(ISBN_holder);
+        int is_exist = !check_ISBN(ISBN_holder,index);
         errors_number = 0;
         if(!(strcmp(ISBN_holder,".") == 0 && index != -1) && is_exist && copies_left(ISBN_holder) > 0)
             strcpy(inserted.book_isbn,ISBN_holder);
@@ -150,6 +181,8 @@ int insert_borrow(int index)
                             break;
                     }
                 } else {
+                        if(member_books_number(inserted.member_id,index) == 3)
+                            addError("This member has borrowed 3 books already (this record returning date can not equal null)","");
                         sscanf("0/0/0","%d/%d/%d",&inserted.date_returned.day,&inserted.date_returned.month,&inserted.date_returned.year);
                 }
             }
@@ -177,7 +210,9 @@ int insert_borrow(int index)
                 if(inserted.date_returned.day == 0)
                     book_array[book_index(ISBN_holder)].current--;
                 //printf("%s  -  %04d  -  %d  -  %s", borrow_array[i].book_isbn, borrow_array[i].member_id,borrow_array[i].skip_days, buffer);
+                book_array[book_index(ISBN_holder)].borrowing_number++;
                 i++;
+                borrow_next_id++;
             } else {
                 borrow_edit_success = 1;
                 if(strcmp(ISBN_holder,".") != 0)
@@ -195,6 +230,8 @@ int insert_borrow(int index)
                         book_array[book_index(borrow_array[index].book_isbn)].current--;
                 }
                 else {
+                        book_array[book_index(previous_ISBN)].borrowing_number--;
+                        book_array[book_index(book_index(borrow_array[index].book_isbn))].borrowing_number++;
                     if(previous_day != borrow_array[index].date_returned.day && previous_day == 0)
                     {
                         book_array[book_index(previous_ISBN)].current++;
@@ -291,6 +328,7 @@ int edit_return_date(int index)
             previous_day = borrow_array[index].date_returned.day;
         }
 
+        printf("\nenter (./now) for today's date\n");
         input("Enter returning date dd/mm/yyyy or dd-mm-yyyy : ",buffer,11,"Returning date",0);
         if(strcmpi(buffer,"./now") != 0) {
             if (!(index != -1 && strcmp(buffer,".") == 0))
@@ -305,6 +343,8 @@ int edit_return_date(int index)
                             break;
                     }
                 } else {
+                        if(member_books_number(borrow_array[index].member_id,index) == 3)
+                            addError("This record returning date can not equal null","");
                         sscanf("0/0/0","%d/%d/%d",&inserted.date_returned.day,&inserted.date_returned.month,&inserted.date_returned.year);
                 }
             }
@@ -366,7 +406,7 @@ int display_borrows(borrow borrows[100]) {
     }
     else if(borrows_displayed_number != 0) {
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-        printf("\n%-30s   %-15s   %-7s   %-15s   %-15s   %-15s   %-15s\n","BOOK ISBN","BOOK TITLE","MEMBER ID","MEMBER NAME","BORROWING DATE","DATE DUE TO RETURN","DATE RETURNED");
+        printf("\n%-7s   %-30s   %-15s   %-7s   %-15s   %-15s   %-15s   %-15s\n","ID","BOOK ISBN","BOOK TITLE","MEMBER ID","MEMBER NAME","BORROWING DATE","DATE DUE TO RETURN","DATE RETURNED");
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
         for(z=0;z<borrows_displayed_number;z++)
             display_borrow_record(borrows,borrows_displayed[z]);
@@ -405,14 +445,16 @@ void display_borrow_record(borrow borrows[100], int y) {
 
     if(borrows[y].date_returned.day != 0)
         //%-30s   %-15s   %-7s   %-15s   %-10s   %-10s   %-10s
-        printf("%-30s   %-13.13s%-2.2s   %-04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           %02d/%02d/%04d\n",
+        printf("%04d      %-30s   %-13.13s%-2.2s   %04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           %02d/%02d/%04d\n",
+               borrows[y].id,
                borrows[y].book_isbn,book_title,(strlen(book_title)>13) ? ".." : "",
                borrows[y].member_id,name,(strlen(name)>13) ? ".." : "",
                borrows[y].date_issued.day, borrows[y].date_issued.month, borrows[y].date_issued.year,
                borrows[y].date_should_return.day, borrows[y].date_should_return.month, borrows[y].date_should_return.year,
                borrows[y].date_returned.day, borrows[y].date_returned.month, borrows[y].date_returned.year);
     else
-        printf("%-30s   %-13.13s%-2.2s   %-04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           -         \n",
+        printf("%04d      %-30s   %-13.13s%-2.2s   %04d        %-13.13s%-2.2s   %02d/%02d/%04d        %02d/%02d/%04d           -         \n",
+               borrows[y].id,
                borrows[y].book_isbn,book_title,(strlen(book_title)>13) ? ".." : "",
                borrows[y].member_id,name,(strlen(name)>13) ? ".." : "",
                borrows[y].date_issued.day, borrows[y].date_issued.month, borrows[y].date_issued.year,
@@ -481,7 +523,8 @@ int search_borrows(borrow borrows[100]){
             else if(validateInteger(search_txt))
             {
                 sscanf(search_txt,"%d\n",&number);
-                if(borrows[y].member_id == number || (((borrows[y].date_issued.day == number || borrows[y].date_issued.month == number || borrows[y].date_issued.year == number) || (borrows[y].date_should_return.day == number || borrows[y].date_should_return.month == number || borrows[y].date_should_return.year == number) || (borrows[y].date_returned.day == number || borrows[y].date_returned.month == number || borrows[y].date_returned.year == number)) && number != 0))
+                //(((borrows[y].date_issued.day == number || borrows[y].date_issued.month == number || borrows[y].date_issued.year == number) || (borrows[y].date_should_return.day == number || borrows[y].date_should_return.month == number || borrows[y].date_should_return.year == number) || (borrows[y].date_returned.day == number || borrows[y].date_returned.month == number || borrows[y].date_returned.year == number)) && number != 0)
+                if(borrows[y].member_id == number || borrows[y].id == number)
                     add_borrow_record(y);
             }
             else if(is_date = validateDate(search_txt))
@@ -506,7 +549,7 @@ int search_borrows(borrow borrows[100]){
     }
     else if(borrows_displayed_number != 0) {
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
-        printf("\n%-30s   %-15s   %-7s   %-15s   %-15s   %-15s   %-15s\n","BOOK ISBN","BOOK TITLE","MEMBER ID","MEMBER NAME","BORROWING DATE","DATE DUE TO RETURN","DATE RETURNED");
+        printf("\n%-7s   %-30s   %-15s   %-7s   %-15s   %-15s   %-15s   %-15s\n","ID","BOOK ISBN","BOOK TITLE","MEMBER ID","MEMBER NAME","BORROWING DATE","DATE DUE TO RETURN","DATE RETURNED");
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
         for(z=0;z<borrows_displayed_number;z++)
             display_borrow_record(borrows,borrows_displayed[z]);
@@ -542,6 +585,7 @@ void display_borrow(int index)
     else
         strcpy(book_title,"[deleted book]");
 
+    display_int_info("BORROWING OPERATION ID : ",borrow_array[index].id);
     display_info("BOOK ISBN : ",borrow_array[index].book_isbn);
     display_info("BOOK TITLE : ",book_title);
     display_int_info("MEMBER ID : ",borrow_array[index].member_id);
@@ -557,7 +601,7 @@ void display_borrow(int index)
 void delete_borrow(int index)
 {
     int j=index;
-
+    book_array[index].borrowing_number--;
     if(borrow_array[index].date_returned.day == 0)
         book_array[book_index(borrow_array[index].book_isbn)].current++;
 
@@ -576,6 +620,35 @@ void delete_borrow(int index)
     return;
 }
 
+
+void print_overdue(borrow array[]){
+    int c,z;
+    char buffer[15];
+    today(buffer);
+    dateStruct d1;
+    sscanf(buffer,"%d/%d/%d",&d1.day,&d1.month,&d1.year);
+    borrows_displayed_number = 0;
+
+    for(c=0;c<i;c++){
+        dateStruct when_back=array[c].date_should_return;
+
+        if(compare_dates(d1,when_back) == 1 && array[c].date_returned.day == 0) //display_borrow(c);
+            add_borrow_record(c);
+    }
+
+     if(borrows_displayed_number != 0) {
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
+        printf("\n%-7s   %-30s   %-15s   %-7s   %-15s   %-15s   %-15s   %-15s\n","ID","BOOK ISBN","BOOK TITLE","MEMBER ID","MEMBER NAME","BORROWING DATE","DATE DUE TO RETURN","DATE RETURNED");
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+        for(z=0;z<borrows_displayed_number;z++)
+            display_borrow_record(array,borrows_displayed[z]);
+    } else {
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+        printf("  There are no overdue books\n  ");
+        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+    }
+
+}
 
 /*book book_array[3];
 borrow borrow_array[2];

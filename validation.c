@@ -374,7 +374,7 @@ void display_int_info(char title[], int integer) {
     SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 27);
     printf("\n%30s",title);
     SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-    printf(" %d",integer);
+    printf(" %04d",integer);
     return;
 }
 

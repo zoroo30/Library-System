@@ -18,6 +18,9 @@ int main()
 
     //display_borrows(borrow_array);
 
+    initialize_books();
+    initialize_borrowed();
+    initialize_members();
 
     load_menu(-1,"");
 

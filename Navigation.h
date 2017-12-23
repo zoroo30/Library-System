@@ -403,39 +403,6 @@ void go(int operation_id,int parent_id) {
             }
             load_menu(0,"");
             return 1;
-        /*case 3:
-            //Add new copies
-            sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
-
-            while(1){
-                results_number = search_ISBN(book_array, menu_items[get_operation_index(operation_id)].value);
-
-                if(results_number == 1){int book_index=current_book_index; edit_copies(current_book_index); search_next_step(2,0,book_index,0); results_number = 1;}
-                else if(results_number == -2) {load_menu(0,""); return;}
-                else if(results_number == -3) {}
-
-                if(results_number == 0){
-                    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
-                    printf("\n(Wrong ISBN)\n");
-                }
-                if(results_number == 0)
-                    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
-
-                if(results_number == 1) {printf("\n==> Advanced search (./search)");}
-                printf("\n==> return to menu (./menu)");
-                print_seprator(sep_size);
-            }
-            load_menu(0,"");
-            return 1;
-        case 4:
-            //Delete
-
-            return 1;
-        case 5:
-            //Edit
-
-            return 1;
-        */
         case 6:
             load_menu(6,"");
             return 1;
@@ -544,8 +511,34 @@ void go(int operation_id,int parent_id) {
             while(1){
                 results_number = search_borrows(borrow_array);
                 if(results_number == -1) {load_menu(9,""); return;}
-                else if(results_number == -2) {int borrow_index=current_borrow_index; insert_borrow(current_borrow_index); search_next_step(11,9,borrow_index,0,"borrows"); results_number = 1;}
-                else if(results_number == -3) {int borrow_index=current_borrow_index; edit_return_date(current_borrow_index); search_next_step(11,9,borrow_index,1,"borrows"); results_number = 1;}
+                else if(results_number == -2) {
+                    if(member_index(borrow_array[current_borrow_index].member_id) != -1 && book_index(borrow_array[current_borrow_index].book_isbn) != -1)
+                    {
+                        int borrow_index=current_borrow_index; insert_borrow(current_borrow_index); search_next_step(11,9,borrow_index,0,"borrows"); results_number = 1;
+                    }else {
+                        int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
+                        display_borrow(current_borrow_index);
+                        results_number = 1;
+
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+                        printf("\n  This record can not be edited  ");
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                    }
+                }
+                else if(results_number == -3) {
+                    if(member_index(borrow_array[current_borrow_index].member_id) != -1 && book_index(borrow_array[current_borrow_index].book_isbn) != -1)
+                    {
+                        int borrow_index=current_borrow_index; edit_return_date(current_borrow_index); search_next_step(11,9,borrow_index,1,"borrows"); results_number = 1;
+                    }else {
+                        int sep_size = operation_header(parent_id,"Advanced search (edit - delete)");
+                        display_borrow(current_borrow_index);
+                        results_number = 1;
+
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 79);
+                        printf("\n  This record can not be edited  ");
+                        SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                    }
+                }
                 else if(results_number == -4) {
                     int borrow_index=current_borrow_index;
                     int youSure = are_you_sure(operation_id,parent_id,sep_size);
@@ -586,13 +579,60 @@ void go(int operation_id,int parent_id) {
             return 1;
         case 13:
             //Overdue
-
+            sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+            print_overdue(borrow_array);
+            printf("\n==> return to menu (./menu)");
+            print_seprator(sep_size);
+            char choice[10] = "";
+            while(strcmp("./menu",choice)!=0)
+            {
+                printf("Enter your choice : ");
+                scanf(" %6s", choice);
+                while(getchar() != '\n');
+                if(strcmp("./menu",choice)!=0)
+                {
+                    clrscr();
+                    sep_size = operation_header(parent_id, book_array[current_book_index].title);
+                    sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+                    print_overdue(borrow_array);
+                    printf("\n==> return to menu (./menu)");
+                    print_seprator(sep_size);
+                    printf("Please choose one of the options above\n");
+                }
+            }
+            if(strcmp("./menu",choice)==0)
+                load_menu(12,"");
             return 1;
         case 14:
             //Popular
-
+            sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+            mostPopular(book_array);
+            printf("\n==> return to menu (./menu)");
+            print_seprator(sep_size);
+            strcpy(choice,"");
+            while(strcmp("./menu",choice)!=0)
+            {
+                printf("Enter your choice : ");
+                scanf(" %6s", choice);
+                while(getchar() != '\n');
+                if(strcmp("./menu",choice)!=0)
+                {
+                    clrscr();
+                    sep_size = operation_header(parent_id, book_array[current_book_index].title);
+                    sep_size = operation_header(parent_id, menu_items[get_operation_index(operation_id)].value);
+                    print_overdue(borrow_array);
+                    printf("\n==> return to menu (./menu)");
+                    print_seprator(sep_size);
+                    printf("Please choose one of the options above\n");
+                }
+            }
+            if(strcmp("./menu",choice)==0)
+                load_menu(12,"");
             return 1;
         case 15:
+            save_books();
+            save_borrowed();
+            save_members();
             load_menu(-1,"Your changes have been saved");
             return 1;
         case 16:
@@ -600,7 +640,9 @@ void go(int operation_id,int parent_id) {
             return 1;
         case 17:
             //Save and exit
-
+            save_books();
+            save_borrowed();
+            save_members();
             return 1;
         case 18:
             //Exit without saving

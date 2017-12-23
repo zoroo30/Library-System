@@ -18,20 +18,25 @@ typedef struct
 } book;
 */
 
-book book_array[100] = {{"Welcome To C","Ahmed Tarek kamal aboughanima","-","23213-123-12123",{10,2,2005},20,20,"-"},
-                        {"Lord of The rings","nour","-","23213-123",{0,0,0},5,4,"-"},
-                        {"Lord of The flies","nour","-","23213-12123",{0,0,0},5,3,"-"},
-                        {"The lord","malek","-","q23213-123-12123",{0,0,0},5,5,"-"},
-                        {"Book","Ahmed Tarek","-","Q23213-123-12123",{3,4,2010},3,3,"-"},
-                        {"NOt book","Ahmed Tarek","-","23213-123-12123",{20,3,2011},6,6,"-"},
-                        {"Blah blah","Ahmed Tarek","-","23213-123-12123",{3,1,1998},12,12,"-"},
-                        {"no yes","Ahmed Tarek","-","23213-123-12123",{7,11,1997},1,1,"-"}};
-static int i=8;
+book book_array[100];
+static int i=7;
 
 int books_displayed[100];
 int books_displayed_number = 0;
 
 int current_book_index = -1, edit_success = 0, book_delete_success = -1;
+
+void initialize_books()
+{
+    i=read_books(book_array,"books.dat");
+    if(i != 0)
+        i = i-1;
+}
+
+void save_books()
+{
+    write_books(book_array,i,"books.dat");
+}
 
 int insert_book(int index)
 {
@@ -46,6 +51,10 @@ int insert_book(int index)
         char buffer[11];
         char ISBN_holder[30];
         char term;
+
+        if(index != -1) {
+            inserted.borrowing_number = 0;
+        }
 
         input("\nEnter book ISBN (required) [30] : ",ISBN_holder,30,"ISBN",1);
         if(!(strcmp(ISBN_holder,".") == 0 && index != -1) && check_ISBN(ISBN_holder,index))
@@ -503,4 +512,25 @@ int book_index(char ISBN_holder[]){
         }
     }
     return -1;
+}
+
+void mostPopular (book books[])
+{
+    int y,x,temp;
+    for(y=0;y<i;y++)
+    {
+        for(x=0;x<i-y;x++)
+        {
+            if(books[x].borrowing_number<books[x+1].borrowing_number)
+            {
+                temp=books[x+1].borrowing_number;
+                books[x+1].borrowing_number=books[x].borrowing_number;
+                books[x].borrowing_number=temp;
+
+            }
+        }
+    }
+    printf("\nMost Popular book are:\n\n");
+    for(y=1;y<=5;y++)
+        printf("==>  %s \n",books[y].title);
 }

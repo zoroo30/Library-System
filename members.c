@@ -6,16 +6,39 @@
 
 
 
-member member_array[100] = {{"Mohamed","Ahmed",1,{1,"street","city"},"01097664886",11,"mohamed@yahoo.com",0},
-                            {"Ahmed","Tarek",2,{1,"street","city"},"01097664886",11,"ahmed.zoroo30@outlook.com",0}};
-static int i = 2;
-static int member_next_id = 2;
+member member_array[100];
+
+static int i = 0;
+static int member_next_id = 0;
 int members_displayed[100];
 int members_displayed_number = 0;
 
 int current_member_index = -1, member_edit_success = 0, member_delete_success = -1;
 
+void initialize_members()
+{
+    i=read_members(member_array,"members.dat");
+    if(i != 0)
+        i = i-1;
+    member_next_id = maxID() + 1;
 
+}
+void save_members()
+{
+    write_members(member_array,i,"members.dat");
+}
+int maxID()
+{
+    int y,max = 0;
+    if(i != 0)
+        max = member_array[0].ID;
+    for(y = 1; y<i; y++){
+        if(member_array[y].ID>max){
+            max = member_array[y].ID;
+        }
+    }
+    return max;
+}
 int insert_member(int index)
 {
     errors_number = 0;

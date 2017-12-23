@@ -19,6 +19,7 @@ typedef struct
     int copies;
     int current;
     char category[30];
+    int borrowing_number;
 } book;
 
 extern book book_array[100];
